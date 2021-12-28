@@ -33,7 +33,7 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     return ScreenCaptureView(
-      layoutBuilder: (_, captureView, ctrl) {
+      layoutBuilder: (_, ctrl, captureView) {
         return Scaffold(
           appBar: AppBar(
             title: Text(widget.title),
