@@ -30,13 +30,11 @@ class ScreenCaptureController extends ChangeNotifier {
     if (_onCapture) return null;
 
     bool isGranted = await Permission.photosAddOnly.request().then((status) {
-      if (status.isGranted) {
-        return true;
-      } else if (status.isPermanentlyDenied) {
+      if (status.isPermanentlyDenied) {
         openAppSettings();
         return false;
       }
-      return false;
+      return true;
     });
     if (!isGranted) return null;
 
