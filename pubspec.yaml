@@ -16,6 +16,7 @@ dependencies:
   flutter_absolute_path:
   image_gallery_saver:
   share:
+  permission_handler:
 
 dev_dependencies:
   flutter_test:

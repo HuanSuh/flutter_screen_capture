@@ -3,7 +3,7 @@ part of flutter_screen_capture;
 typedef ScreenCaptureBuilder = Widget Function(
     BuildContext context, ScreenCaptureController controller);
 typedef ScreenCaptureLayoutBuilder = Widget Function(BuildContext context,
-    Widget captureView, ScreenCaptureController controller);
+    ScreenCaptureController controller, Widget captureView);
 
 class ScreenCaptureView extends StatefulWidget {
   final ScreenCaptureLayoutBuilder layoutBuilder;
@@ -33,11 +33,12 @@ class _ScreenCaptureViewState extends State<ScreenCaptureView> {
       create: (_) =>
           ScreenCaptureController._(widget.showPreview, widget.pixelRatio),
       child: Consumer<ScreenCaptureController>(
-        builder: (ctx, ctrl, __) {
+        builder: (ctx, ctrl, _) {
           return Stack(
             children: [
               widget.layoutBuilder.call(
                 ctx,
+                ctrl,
                 RepaintBoundary(
                   key: ctrl._captureKey,
                   child: Container(
@@ -53,7 +54,6 @@ class _ScreenCaptureViewState extends State<ScreenCaptureView> {
                     ),
                   ),
                 ),
-                ctrl,
               ),
               if (ctrl._onCapture)
                 GestureDetector(
