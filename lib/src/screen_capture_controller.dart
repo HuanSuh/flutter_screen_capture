@@ -28,6 +28,18 @@ class ScreenCaptureController extends ChangeNotifier {
 
   Future<File?> capture() async {
     if (_onCapture) return null;
+
+    bool isGranted = await Permission.photosAddOnly.request().then((status) {
+      if (status.isGranted) {
+        return true;
+      } else if (status.isPermanentlyDenied) {
+        openAppSettings();
+        return false;
+      }
+      return false;
+    });
+    if (!isGranted) return null;
+
     _setState(_ScreenCaptureState.capture);
     Future.delayed(
       const Duration(milliseconds: 80),
