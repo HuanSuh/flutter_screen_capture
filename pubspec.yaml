@@ -1,11 +1,10 @@
 name: flutter_screen_capture
 description: A new Flutter project.
-version: 0.1.0
-homepage:
+version: 0.2.0
 
 environment:
-  sdk: ">=2.12.0 <3.0.0"
-  flutter: ">=1.17.0"
+  sdk: '>=2.17.6 <3.0.0'
+  flutter: '>=3.0.0'
 
 dependencies:
   flutter:
@@ -13,7 +12,6 @@ dependencies:
 
   provider:
   widget_to_image:
-  flutter_absolute_path:
   image_gallery_saver:
   share:
   permission_handler:

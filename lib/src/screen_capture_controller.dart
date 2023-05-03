@@ -55,11 +55,8 @@ class ScreenCaptureController extends ChangeNotifier {
         );
         String? fileUri =
             savedResult == null ? null : savedResult['filePath'] as String?;
-        if (fileUri?.isNotEmpty == true) {
-          String path = await FlutterAbsolutePath.getAbsolutePath(fileUri);
-          if (path.isNotEmpty == true) {
-            return File(path);
-          }
+        if (fileUri != null && fileUri.isNotEmpty) {
+          return File.fromUri(Uri.parse(fileUri));
         }
         throw Exception();
       }).catchError((e) {
