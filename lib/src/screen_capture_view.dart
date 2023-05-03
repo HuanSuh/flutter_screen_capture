@@ -12,13 +12,16 @@ class ScreenCaptureView extends StatefulWidget {
   final double pixelRatio;
   final Widget? watermark;
   final Color? backgroundColor;
+  final Widget? loadingWidget;
+
   const ScreenCaptureView({
     required this.layoutBuilder,
     required this.captureBuilder,
     this.showPreview = true,
-    this.pixelRatio = 1.0,
+    this.pixelRatio = 4.0,
     this.watermark,
     this.backgroundColor,
+    this.loadingWidget,
     Key? key,
   }) : super(key: key);
 
@@ -68,7 +71,7 @@ class _ScreenCaptureViewState extends State<ScreenCaptureView> {
                         : Colors.black26,
                     alignment: Alignment.center,
                     child: ctrl._state == _ScreenCaptureState.saving
-                        ? const CupertinoActivityIndicator()
+                        ? widget.loadingWidget ?? const CupertinoActivityIndicator()
                         : null,
                   ),
                 ),
