@@ -56,7 +56,7 @@ class ScreenCaptureController extends ChangeNotifier {
         String? fileUri =
             savedResult == null ? null : savedResult['filePath'] as String?;
         if (fileUri != null && fileUri.isNotEmpty) {
-          return File.fromUri(Uri.parse(fileUri));
+          return uri2file.toFile(fileUri);
         }
         throw Exception();
       }).catchError((e) {
