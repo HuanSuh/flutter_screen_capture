@@ -1,8 +1,8 @@
-part of flutter_screen_capture;
+part of '../flutter_screen_capture.dart';
 
 class ScreenCapturePreview extends StatelessWidget {
   final ScreenCaptureController controller;
-  const ScreenCapturePreview(this.controller, {Key? key}) : super(key: key);
+  const ScreenCapturePreview(this.controller, {super.key});
 
   static Future<void> show(
       BuildContext context, ScreenCaptureController controller) {
