@@ -1,4 +1,4 @@
-part of flutter_screen_capture;
+part of '../flutter_screen_capture.dart';
 
 typedef ScreenCaptureBuilder = Widget Function(
     BuildContext context, ScreenCaptureController controller);
@@ -22,8 +22,8 @@ class ScreenCaptureView extends StatefulWidget {
     this.watermark,
     this.backgroundColor,
     this.loadingWidget,
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   @override
   State<ScreenCaptureView> createState() => _ScreenCaptureViewState();

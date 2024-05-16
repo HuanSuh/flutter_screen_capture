@@ -1,4 +1,4 @@
-part of flutter_screen_capture;
+part of '../flutter_screen_capture.dart';
 
 enum _ScreenCaptureState { idle, capture, saving, preview }
 
@@ -29,14 +29,14 @@ class ScreenCaptureController extends ChangeNotifier {
   Future<File?> capture() async {
     if (_onCapture) return null;
 
-    bool isGranted = await Permission.photosAddOnly.request().then((status) {
-      if (status.isPermanentlyDenied) {
-        openAppSettings();
-        return false;
-      }
-      return true;
-    });
-    if (!isGranted) return null;
+    // bool isGranted = await Permission.photosAddOnly.request().then((status) {
+    //   if (status.isPermanentlyDenied) {
+    //     openAppSettings();
+    //     return false;
+    //   }
+    //   return true;
+    // });
+    // if (!isGranted) return null;
 
     _setState(_ScreenCaptureState.capture);
     Future.delayed(
@@ -45,33 +45,33 @@ class ScreenCaptureController extends ChangeNotifier {
     );
     await Future.delayed(const Duration(milliseconds: 100));
     try {
-      _previewFile = await WidgetToImage.repaintBoundaryToImage(
-        _captureKey,
-        pixelRatio: pixelRatio,
-      ).then((bytes) async {
-        Map<Object, Object>? savedResult = await ImageGallerySaver.saveImage(
-          bytes.buffer.asUint8List(0),
-          isReturnImagePathOfIOS: true,
-        );
-        String? fileUri =
-            savedResult == null ? null : savedResult['filePath'] as String?;
-        if (fileUri != null && fileUri.isNotEmpty) {
-          return uri2file.toFile(fileUri);
-        }
-        throw Exception();
-      }).catchError((e) {
-        throw e;
-      }).whenComplete(() {
-        if (_showPreview) {
-          _setState(_ScreenCaptureState.preview);
-          Future.delayed(
-            const Duration(seconds: 2),
-            () => _setState(_ScreenCaptureState.idle),
-          );
-        } else {
-          _setState(_ScreenCaptureState.idle);
-        }
-      });
+      // _previewFile = await WidgetsToImage.repaintBoundaryToImage(
+      //   _captureKey,
+      //   pixelRatio: pixelRatio,
+      // ).then((bytes) async {
+      //   Map<Object, Object>? savedResult = await ImageGallerySaver.saveImage(
+      //     bytes.buffer.asUint8List(0),
+      //     isReturnImagePathOfIOS: true,
+      //   );
+      //   String? fileUri =
+      //       savedResult == null ? null : savedResult['filePath'] as String?;
+      //   if (fileUri != null && fileUri.isNotEmpty) {
+      //     return uri2file.toFile(fileUri);
+      //   }
+      //   throw Exception();
+      // }).catchError((e) {
+      //   throw e;
+      // }).whenComplete(() {
+      //   if (_showPreview) {
+      //     _setState(_ScreenCaptureState.preview);
+      //     Future.delayed(
+      //       const Duration(seconds: 2),
+      //       () => _setState(_ScreenCaptureState.idle),
+      //     );
+      //   } else {
+      //     _setState(_ScreenCaptureState.idle);
+      //   }
+      // });
       return _previewFile;
     } catch (e) {
       return Future.error(e);

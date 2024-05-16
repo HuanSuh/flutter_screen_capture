@@ -10,7 +10,7 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 import 'package:share/share.dart';
 import 'package:uri_to_file/uri_to_file.dart' as uri2file;
-import 'package:widget_to_image/widget_to_image.dart';
+import 'package:widgets_to_image/widgets_to_image.dart';
 
 import 'dart:ui' show lerpDouble;
 import 'package:flutter/foundation.dart';
