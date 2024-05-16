@@ -6,12 +6,16 @@ class ScreenCaptureController extends ChangeNotifier {
   final GlobalKey _captureKey = GlobalKey();
   final bool _showPreview;
   final double pixelRatio;
+  final WidgetsToImageController widgetToImageController;
+
   ScreenCaptureController._(
     this._showPreview,
     this.pixelRatio,
+    this.widgetToImageController,
   );
 
   _ScreenCaptureState _state = _ScreenCaptureState.idle;
+
   _setState(_ScreenCaptureState value) {
     _state = value;
     notifyListeners();
@@ -20,23 +24,21 @@ class ScreenCaptureController extends ChangeNotifier {
   bool get _onCapture => _state != _ScreenCaptureState.idle;
 
   /// You can edit widget for capture. (ex: add watermark)
-  bool get isOnCapture =>
-      _state == _ScreenCaptureState.capture ||
-      _state == _ScreenCaptureState.saving;
+  bool get isOnCapture => _state == _ScreenCaptureState.capture || _state == _ScreenCaptureState.saving;
 
   File? _previewFile;
 
   Future<File?> capture() async {
     if (_onCapture) return null;
 
-    // bool isGranted = await Permission.photosAddOnly.request().then((status) {
-    //   if (status.isPermanentlyDenied) {
-    //     openAppSettings();
-    //     return false;
-    //   }
-    //   return true;
-    // });
-    // if (!isGranted) return null;
+    bool isGranted = await Permission.photos.request().then((status) {
+      if (status.isPermanentlyDenied) {
+        openAppSettings();
+        return false;
+      }
+      return true;
+    });
+    if (!isGranted) return null;
 
     _setState(_ScreenCaptureState.capture);
     Future.delayed(
@@ -45,37 +47,42 @@ class ScreenCaptureController extends ChangeNotifier {
     );
     await Future.delayed(const Duration(milliseconds: 100));
     try {
-      // _previewFile = await WidgetsToImage.repaintBoundaryToImage(
-      //   _captureKey,
-      //   pixelRatio: pixelRatio,
-      // ).then((bytes) async {
-      //   Map<Object, Object>? savedResult = await ImageGallerySaver.saveImage(
-      //     bytes.buffer.asUint8List(0),
-      //     isReturnImagePathOfIOS: true,
-      //   );
-      //   String? fileUri =
-      //       savedResult == null ? null : savedResult['filePath'] as String?;
-      //   if (fileUri != null && fileUri.isNotEmpty) {
-      //     return uri2file.toFile(fileUri);
-      //   }
-      //   throw Exception();
-      // }).catchError((e) {
-      //   throw e;
-      // }).whenComplete(() {
-      //   if (_showPreview) {
-      //     _setState(_ScreenCaptureState.preview);
-      //     Future.delayed(
-      //       const Duration(seconds: 2),
-      //       () => _setState(_ScreenCaptureState.idle),
-      //     );
-      //   } else {
-      //     _setState(_ScreenCaptureState.idle);
-      //   }
-      // });
+      _previewFile = await widgetToImageController.capture().then((bytes) async {
+        if (bytes != null) {
+          String filePath = await _saveImage(bytes);
+          if (filePath.isNotEmpty) {
+            return uri2file.toFile(filePath);
+          }
+        }
+        throw Exception();
+      }).catchError((e) {
+        throw e;
+      }).whenComplete(() {
+        if (_showPreview) {
+          _setState(_ScreenCaptureState.preview);
+          Future.delayed(
+            const Duration(seconds: 2),
+            () => _setState(_ScreenCaptureState.idle),
+          );
+        } else {
+          _setState(_ScreenCaptureState.idle);
+        }
+      });
       return _previewFile;
     } catch (e) {
       return Future.error(e);
     }
+  }
+
+  Future<String> _saveImage(Uint8List bytes) async {
+    dynamic result = await ImageGallerySaver.saveImage(
+      bytes,
+      isReturnImagePathOfIOS: true,
+    );
+    if (result is Map) {
+      return result['filePath'] as String;
+    }
+    throw Exception();
   }
 
   Future<bool> share(File file) {
